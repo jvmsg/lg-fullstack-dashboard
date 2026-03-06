@@ -23,6 +23,106 @@ Sistema web que apresenta a eficiência de produção de 4 linhas de produtos (G
 -   **Server:** PHP 7.2.5+
 -   **Ambiente:** Laragon (Windows)
 
+## 🏗️ Estrutura do Banco de Dados
+
+### Tabela: `product_types`
+
+Armazena os tipos de produtos fabricados.
+
+| Campo        | Tipo        | Descrição                  |
+| ------------ | ----------- | -------------------------- |
+| `id`         | BIGINT (PK) | Identificador único        |
+| `name`       | VARCHAR     | Nome do produto (único)    |
+| `created_at` | TIMESTAMP   | Data de criação            |
+| `updated_at` | TIMESTAMP   | Data de última atualização |
+
+**Dados iniciais (via seeder):**
+
+-   Geladeira
+-   Máquina de Lavar
+-   TV
+-   Ar-Condicionado
+
+### Tabela: `production_metrics`
+
+Armazena as métricas de produção diárias para cada produto.
+
+| Campo                | Tipo        | Descrição                          |
+| -------------------- | ----------- | ---------------------------------- |
+| `id`                 | BIGINT (PK) | Identificador único                |
+| `product_type_id`    | BIGINT (FK) | Referência para `product_types.id` |
+| `day`                | DATE        | Data da produção                   |
+| `quantity_produced`  | INT         | Quantidade de unidades produzidas  |
+| `quantity_defective` | INT         | Quantidade de unidades defeituosas |
+| `created_at`         | TIMESTAMP   | Data de criação                    |
+| `updated_at`         | TIMESTAMP   | Data de última atualização         |
+
+**Constraints:**
+
+-   Foreign Key: `product_type_id` referencia `product_types.id` (com cascata de exclusão)
+-   Unique: `(product_type_id, day)` - apenas um registro por produto por dia
+
+**Dados iniciais (via seeder):**
+
+-   Período: 1º de dezembro de 2025 até 28 de fevereiro de 2026
+-   Quantidade produzida: 500-2000 unidades/dia
+-   Quantidade defeituosa: até 20% da quantidade produzida
+
+## 🌱 Como os Seeders São Executados
+
+O sistema utiliza seeders para popular o banco de dados com dados iniciais. Eles são executados na seguinte ordem:
+
+### Ordem de Execução
+
+1. **ProductTypesSeeder** - Insere os 4 tipos de produtos
+2. **ProductionMetricsSeeder** - Insere as métricas de produção (dependente dos product_types)
+
+Esta ordem é importante porque `ProductionMetricsSeeder` precisa dos IDs dos product_types para criar os registros de produção.
+
+### Configuração no DatabaseSeeder
+
+O arquivo `database/seeds/DatabaseSeeder.php` define a ordem de execução:
+
+```php
+public function run()
+{
+    // Execute seeders in order of dependency
+    $this->call(ProductTypesSeeder::class);
+    $this->call(ProductionMetricsSeeder::class);
+}
+```
+
+### Como Executar os Seeders
+
+**Opção 1 - Automática (Recomendado):**
+
+```bash
+php artisan db:setup
+```
+
+Este comando:
+
+1. Cria o banco de dados (se não existir)
+2. Executa as migrations
+3. Regenera o autoloader do Composer
+4. Executa todos os seeders na ordem correta
+
+**Opção 2 - Manual:**
+
+```bash
+php artisan migrate --seed
+```
+
+Ou execute seeders individualmente:
+
+```bash
+# Apenas ProductTypesSeeder
+php artisan db:seed --class=ProductTypesSeeder
+
+# Apenas ProductionMetricsSeeder (após ProductTypesSeeder)
+php artisan db:seed --class=ProductionMetricsSeeder
+```
+
 ## 🧩 Como o Frontend Foi Construído
 
 O frontend foi construído com **Blade + Bootstrap 4 + Sass + JavaScript vanilla**, priorizando organização por componentes e reaproveitamento.
