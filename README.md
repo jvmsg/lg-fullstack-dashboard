@@ -8,20 +8,92 @@ Sistema web que apresenta a eficiência de produção de 4 linhas de produtos (G
 
 **Funcionalidades principais:**
 
-- Visualização de todas as linhas de produção simultaneamente
-- Filtro por linha específica
-- Filtro por período (padrão: Janeiro/2026)
-- Cálculo automático de eficiência: `(unidades_produzidas - unidades_defeituosas) / unidades_produzidas × 100`
-- API REST para consumo dos dados
-- Interface responsiva com Bootstrap 4
+-   Visualização de todas as linhas de produção simultaneamente
+-   Filtro por linha específica
+-   Filtro por período (padrão: Janeiro/2026)
+-   Cálculo automático de eficiência: `(unidades_produzidas - unidades_defeituosas) / unidades_produzidas × 100`
+-   API REST para consumo dos dados
+-   Interface responsiva com Bootstrap 4
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Backend:** Laravel 7.x
-- **Frontend:** Blade Templates + Bootstrap 4
-- **Banco de Dados:** MySQL 5.7+
-- **Server:** PHP 7.2.5+
-- **Ambiente:** Laragon (Windows)
+-   **Backend:** Laravel 7.x
+-   **Frontend:** Blade Templates + Bootstrap 4
+-   **Banco de Dados:** MySQL 5.7+
+-   **Server:** PHP 7.2.5+
+-   **Ambiente:** Laragon (Windows)
+
+## 🧩 Como o Frontend Foi Construído
+
+O frontend foi construído com **Blade + Bootstrap 4 + Sass + JavaScript vanilla**, priorizando organização por componentes e reaproveitamento.
+
+### 1. Estrutura de layout
+
+-   O shell principal está em `resources/views/layouts/app.blade.php`.
+-   Esse layout compõe a página com:
+    -   `components/layout/sidebar.blade.php`
+    -   `components/layout/topbar.blade.php`
+    -   `components/layout/footer.blade.php`
+-   O conteúdo de cada tela entra no `@yield('content')` dentro de `<main class="lg-content">`.
+
+### 2. Dashboard componentizado
+
+O dashboard foi dividido em componentes Blade para facilitar manutenção:
+
+-   `components/dashboard/hero.blade.php`: resumo geral + filtros
+-   `components/dashboard/metric-card.blade.php`: cards de eficiência por linha
+-   `components/dashboard/chart-panel.blade.php`: painel do line chart
+-   `components/dashboard/table-panel.blade.php`: tabela "Pulse diario"
+
+Além disso, o conteúdo da área principal foi extraído para:
+
+-   `resources/views/dashboard/partials/content.blade.php`
+
+E a view principal `resources/views/dashboard/index.blade.php` mantém apenas o container:
+
+-   `<div data-dashboard-content>...</div>`
+
+### 3. Filtro sem recarregar sidenav/layout
+
+Ao aplicar filtros, a página **não recarrega o layout completo**. Apenas a área do dashboard é atualizada.
+
+Fluxo implementado:
+
+1. O formulário com `data-dashboard-filter-form` é interceptado no `resources/js/app.js`.
+2. O frontend faz `fetch` para a mesma rota com header `X-Dashboard-Partial: content`.
+3. O controller (`DashboardController@index`) detecta esse header e retorna apenas `dashboard.partials.content`.
+4. O HTML retornado substitui apenas `data-dashboard-content`.
+5. O gráfico é reinicializado e o subtítulo da topbar é sincronizado.
+
+Se houver qualquer erro na chamada assíncrona, o código faz fallback para navegação normal.
+
+### 4. Gráfico com Chart.js
+
+-   O Chart.js é instalado via npm e importado em `resources/js/app.js`.
+-   O componente `chart-panel` injeta os dados em JSON no HTML.
+-   O JS monta dinamicamente datasets por linha de produto e renderiza o line chart.
+
+### 5. Estilos e responsividade
+
+-   Os estilos ficam em `resources/sass/` organizados por camadas:
+    -   `base/` (variáveis e estilos globais)
+    -   `layout/` (shell, sidebar, topbar, footer)
+    -   `pages/` (dashboard)
+-   A responsividade usa grid/utilitários do Bootstrap e ajustes próprios em Sass.
+
+### 6. Build frontend
+
+O projeto usa **Laravel Mix** para compilar assets:
+
+```bash
+npm run dev
+```
+
+Arquivos gerados:
+
+-   `public/css/app.css`
+-   `public/js/app.js`
+-   `public/mix-manifest.json`
 
 ## ⚙️ Setup Inicial
 
@@ -72,9 +144,9 @@ php artisan db:setup
 
 Este comando irá:
 
-- ✅ Executar as migrations (criar tabelas)
-- ✅ Popular o banco com dados de teste (Janeiro/2026)
-- ✅ Preparar o dashboard para uso
+-   ✅ Executar as migrations (criar tabelas)
+-   ✅ Popular o banco com dados de teste (Janeiro/2026)
+-   ✅ Preparar o dashboard para uso
 
 **Alternativa manual:**
 
