@@ -33199,25 +33199,6 @@ var renderEfficiencyChart = function renderEfficiencyChart() {
     }
   });
 };
-var setupMonthInputClickable = function setupMonthInputClickable() {
-  var scope = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-  var monthInput = scope.querySelector(".lg-month-input");
-  if (!monthInput || monthInput.dataset.clickBound === "true") {
-    return;
-  }
-  monthInput.dataset.clickBound = "true";
-  monthInput.addEventListener("click", function (event) {
-    // Só abre o picker se não clicou no ícone do calendário
-    if (event.target === this) {
-      try {
-        this.showPicker();
-      } catch (error) {
-        // Fallback para navegadores que não suportam showPicker()
-        this.focus();
-      }
-    }
-  });
-};
 var loadDashboardContent = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(url, contentContainer) {
     var response, html;
@@ -33248,7 +33229,6 @@ var loadDashboardContent = /*#__PURE__*/function () {
           window.history.replaceState({}, "", url);
           syncTopbarSubtitle(contentContainer);
           setupDashboardFilters(contentContainer);
-          setupMonthInputClickable(contentContainer);
           renderEfficiencyChart(contentContainer);
         case 4:
           return _context.a(2);
@@ -33343,7 +33323,6 @@ var setupDashboardFilters = function setupDashboardFilters() {
 };
 document.addEventListener("DOMContentLoaded", function () {
   setupDashboardFilters(document);
-  setupMonthInputClickable(document);
   syncTopbarSubtitle(document);
   renderEfficiencyChart(document);
   var body = document.body;

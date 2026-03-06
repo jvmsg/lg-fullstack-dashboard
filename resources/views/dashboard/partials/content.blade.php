@@ -10,6 +10,7 @@
     :productTypes="$productTypes"
     :selectedProductTypeId="$selectedProductTypeId"
     :selectedPeriod="$selectedPeriod"
+    :periods="$periods"
     :dataReady="$dataReady"
 />
 

@@ -81,7 +81,7 @@ class DashboardController extends Controller
                 'produced' => $produced,
                 'defective' => $defective,
                 'efficiency' => round($efficiency, 2),
-                'trend' => is_null($trendValue) ? '--' : sprintf('%+.1f%%', $trendValue),
+                'trend' => is_null($trendValue) ? null : sprintf('%+.1f%%', $trendValue),
                 'trend_class' => is_null($trendValue) ? '' : ($trendValue < 0 ? 'is-down' : 'is-up'),
             ];
         })->sortByDesc('efficiency')->values();
@@ -153,6 +153,7 @@ class DashboardController extends Controller
             'selectedYear' => $selectedYear,
             'selectedPeriod' => sprintf('%04d-%02d', $selectedYear, $selectedMonth),
             'periodLabel' => $this->formatPeriodLabel($selectedMonth, $selectedYear),
+            'periods' => $this->buildAvailablePeriods(),
             'dataReady' => true,
         ];
 
@@ -256,6 +257,46 @@ class DashboardController extends Controller
         return ($months[(int) $month] ?? 'Mes') . '/' . $year;
     }
 
+    private function buildAvailablePeriods()
+    {
+        $periods = [];
+        $monthNames = [
+            1 => 'Janeiro',
+            2 => 'Fevereiro',
+            3 => 'Março',
+            4 => 'Abril',
+            5 => 'Maio',
+            6 => 'Junho',
+            7 => 'Julho',
+            8 => 'Agosto',
+            9 => 'Setembro',
+            10 => 'Outubro',
+            11 => 'Novembro',
+            12 => 'Dezembro',
+        ];
+
+        $startDate = Carbon::createFromDate(2025, 12, 1);
+        $endDate = Carbon::now()->endOfMonth();
+
+        $currentDate = (clone $startDate)->startOfMonth();
+
+        while ($currentDate <= $endDate) {
+            $month = (int) $currentDate->format('m');
+            $year = (int) $currentDate->format('Y');
+            $value = $currentDate->format('Y-m');
+            $label = $monthNames[$month] . ' ' . $year;
+
+            $periods[] = [
+                'value' => $value,
+                'label' => $label,
+            ];
+
+            $currentDate->addMonth();
+        }
+
+        return $periods;
+    }
+
     private function emptyStateData()
     {
         return [
@@ -276,6 +317,7 @@ class DashboardController extends Controller
             'selectedYear' => 2026,
             'selectedPeriod' => '2026-01',
             'periodLabel' => 'Jan/2026',
+            'periods' => $this->buildAvailablePeriods(),
             'dataReady' => false,
         ];
     }

@@ -1,4 +1,4 @@
-@props(['summary', 'periodLabel', 'selectedProductTypeName', 'productTypes', 'selectedProductTypeId', 'selectedPeriod', 'dataReady'])
+@props(['summary', 'periodLabel', 'selectedProductTypeName', 'productTypes', 'selectedProductTypeId', 'selectedPeriod', 'periods', 'dataReady'])
 
 <section class="lg-hero card">
     <div class="card-body">
@@ -29,17 +29,7 @@
                 </select>
             </div>
 
-            <div class="form-group mb-0 mr-2">
-                <label for="period" class="sr-only">Periodo</label>
-                <input
-                    id="period"
-                    name="period"
-                    type="month"
-                    class="form-control form-control-sm lg-month-input"
-                    value="{{ $selectedPeriod }}"
-                    onkeydown="return false;"
-                >
-            </div>
+            <x-dashboard.period-select :periods="$periods" :selectedPeriod="$selectedPeriod" />
 
             <button type="submit" class="btn btn-sm lg-filter-btn is-active">Aplicar filtros</button>
             <a href="{{ route('dashboard.index') }}" class="btn btn-sm lg-filter-btn" data-dashboard-clear>Limpar</a>

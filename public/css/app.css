@@ -11446,44 +11446,19 @@ a {
   background: linear-gradient(120deg, #ba1b3b 0%, #db4d69 100%);
 }
 
-.lg-month-input {
-  cursor: pointer;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
-  font-weight: 500;
-  color: var(--lg-text);
-  border: 1px solid rgba(106, 118, 131, 0.3);
-  border-radius: 0.7rem;
-  background-color: #fff;
-  transition: all 0.15s ease;
-  padding: 0.4rem 0.75rem;
-  min-width: 150px;
+select[multiple] {
+  min-height: 100px;
 }
 
-.lg-month-input:focus {
-  outline: none;
-  border-color: var(--lg-accent);
-  box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
+select[multiple] option {
+  padding: 0.5rem;
+  border-radius: 0.4rem;
 }
 
-.lg-month-input:hover {
-  border-color: rgba(106, 118, 131, 0.5);
-}
-
-.lg-month-input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  filter: opacity(0.6);
-  -webkit-transition: filter 0.15s ease;
-  transition: filter 0.15s ease;
-}
-
-.lg-month-input::-webkit-calendar-picker-indicator:hover {
-  filter: opacity(1);
-}
-
-.lg-month-input::-webkit-clear-button {
-  display: none;
+select[multiple] option:checked {
+  background-color: var(--lg-accent);
+  background-image: linear-gradient(120deg, #ba1b3b 0%, #db4d69 100%);
+  color: #fff;
 }
 
 .lg-metric .card-body {
