@@ -129,3 +129,20 @@ SELECT user, host, plugin FROM mysql.user WHERE user = 'root';
 ```
 
 Após executar o script, tente novamente conectar ao banco de dados.
+
+**Solução Alternativa - Configurar MySQL 8.0:**
+
+Se o problema persistir, você pode configurar o MySQL para usar `mysql_native_password` por padrão:
+
+1. Abra o arquivo `my.ini` do MySQL no Laragon (Menu → MySQL → my.ini)
+2. Localize a seção `[mysqld]`
+3. Adicione a seguinte linha:
+
+```ini
+[mysqld]
+mysql_native_password=ON
+```
+
+4. Salve o arquivo
+5. Reinicie o MySQL no Laragon (Menu → MySQL → Restart)
+6. Tente conectar novamente
