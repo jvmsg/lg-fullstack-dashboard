@@ -21,6 +21,7 @@ class SetupDatabase extends Command {
 
       $this->createDatabase($dbConnection, $host, $database, $username, $password); 
       $this->runMigrations();
+      $this->dumpAutoload();
       $this->seedDatabase();
 
       $this->info("Database setup completed successfully.");
@@ -35,8 +36,14 @@ class SetupDatabase extends Command {
   private function createDatabase($dbConnection, $host, $database, $username, $password) {
     try {
       $this->info("Creating database '$database' if it doesn't exist...");
-      $connection = DB::connection($dbConnection);
-      $connection->statement("CREATE DATABASE IF NOT EXISTS `$database`");
+      
+      $pdo = new \PDO(
+        "mysql:host=$host",
+        $username,
+        $password
+      );
+      
+      $pdo->exec("CREATE DATABASE IF NOT EXISTS `$database`");
       $this->info("Database '$database' is ready.");
     } catch (\Exception $e) {
       $this->error("Failed to create database: " . $e->getMessage());
@@ -48,6 +55,12 @@ class SetupDatabase extends Command {
     $this->info("Running migrations...");
     $this->call('migrate', ['--force' => true]);
     $this->info("Migrations completed.");
+  }
+
+  private function dumpAutoload() {
+    $this->info("Generating optimized autoload files...");
+    exec('composer dump-autoload');
+    $this->info("Autoload files generated.");
   }
 
   private function seedDatabase() {
