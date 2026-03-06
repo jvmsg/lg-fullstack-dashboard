@@ -101,11 +101,25 @@
     color: #fff;
     background: linear-gradient(120deg, rgba(200, 16, 46, 0.92) 0%, rgba(228, 80, 105, 0.93) 100%);
     box-shadow: 0 12px 26px rgba(200, 16, 46, 0.3);
+    cursor: default;
+    pointer-events: none;
+    
+    &:hover {
+        background: linear-gradient(120deg, rgba(200, 16, 46, 0.92) 0%, rgba(228, 80, 105, 0.93) 100%);
+        transform: none;
+    }
 }
 
 .lg-sidebar__link.is-disabled {
-    cursor: default;
-    opacity: 0.6;
+    cursor: not-allowed;
+    opacity: 0.5;
+    filter: grayscale(50%);
+    pointer-events: none;
+    
+    &:hover {
+        background: rgba(233, 238, 243, 0.04);
+        transform: none;
+    }
 }
 
 .lg-sidebar__link-dot {
@@ -114,6 +128,14 @@
     border-radius: 999px;
     background: currentColor;
     flex-shrink: 0;
+}
+
+.lg-sidebar__link-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    flex-shrink: 0;
+    margin-right: -0.25rem;
+    opacity: 0.7;
 }
 
 .lg-sidebar__meta {
