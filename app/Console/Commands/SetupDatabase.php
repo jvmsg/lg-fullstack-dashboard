@@ -19,9 +19,7 @@ class SetupDatabase extends Command {
 
     try {
 
-      // Por ter tido problemas com a autenticação no MySQL, optei por criar o banco de dados manualmente e deixar essa parte comentada para evitar erros futuros.
-      // A criação do banco está descrita no README.md para facilitar a configuração do ambiente de desenvolvimento.
-      // $this->createDatabase($dbConnection, $host, $database, $username, $password); 
+      $this->createDatabase($dbConnection, $host, $database, $username, $password); 
       $this->runMigrations();
       $this->seedDatabase();
 
