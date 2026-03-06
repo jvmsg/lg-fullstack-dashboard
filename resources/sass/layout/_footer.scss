@@ -1,0 +1,21 @@
+.lg-footer {
+    margin-top: auto;
+    padding: 0.72rem 1.1rem 1rem;
+    border-top: 1px solid rgba(106, 118, 131, 0.2);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    justify-content: space-between;
+    color: var(--lg-muted);
+    font-size: 0.75rem;
+}
+
+.lg-footer p {
+    margin: 0;
+}
+
+@media (min-width: 992px) {
+    .lg-footer {
+        padding: 0.72rem 2.1rem 1rem;
+    }
+}

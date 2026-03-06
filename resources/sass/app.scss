@@ -1,1 +1,10 @@
-//
+@import 'base/variables';
+@import '~bootstrap/scss/bootstrap';
+
+@import 'base/global';
+@import 'layout/shell';
+@import 'layout/sidebar';
+@import 'layout/topbar';
+@import 'layout/footer';
+
+@import 'pages/dashboard';
