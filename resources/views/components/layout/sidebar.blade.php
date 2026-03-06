@@ -1,6 +1,8 @@
 <aside class="lg-sidebar" id="lgSidebar" aria-label="Main navigation">
     <div class="lg-sidebar__brand">
-        <span class="lg-sidebar__logo">LG</span>
+        <span class="lg-sidebar__logo">
+            <img src="{{ asset('logo-lg-100-44.svg') }}" alt="LG" class="lg-sidebar__logo-image">
+        </span>
         <div>
             <p class="lg-sidebar__brand-label">Plant A</p>
             <h1 class="lg-sidebar__brand-name">Ops Dashboard</h1>
