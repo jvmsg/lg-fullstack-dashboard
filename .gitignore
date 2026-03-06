@@ -3,7 +3,7 @@
 /public/storage
 /storage/*.key
 /vendor
-.env
+# .env Para fins de facilitar avaliação o .env foi adicionado ao repositório, mas em um cenário real ele deve ser ignorado.
 .env.backup
 .phpunit.result.cache
 Homestead.json
