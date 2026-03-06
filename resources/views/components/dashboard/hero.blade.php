@@ -1,4 +1,4 @@
-@props(['summary', 'periodLabel', 'selectedProductTypeName', 'productTypes', 'selectedProductTypeId', 'availableMonths', 'selectedMonth', 'availableYears', 'selectedYear', 'dataReady'])
+@props(['summary', 'periodLabel', 'selectedProductTypeName', 'productTypes', 'selectedProductTypeId', 'selectedPeriod', 'dataReady'])
 
 <section class="lg-hero card">
     <div class="card-body">
@@ -30,25 +30,15 @@
             </div>
 
             <div class="form-group mb-0 mr-2">
-                <label for="month" class="sr-only">Mes</label>
-                <select id="month" name="month" class="form-control form-control-sm">
-                    @foreach ($availableMonths as $month)
-                        <option value="{{ $month }}" {{ (int) $selectedMonth === (int) $month ? 'selected' : '' }}>
-                            {{ str_pad($month, 2, '0', STR_PAD_LEFT) }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="form-group mb-0 mr-2">
-                <label for="year" class="sr-only">Ano</label>
-                <select id="year" name="year" class="form-control form-control-sm">
-                    @foreach ($availableYears as $year)
-                        <option value="{{ $year }}" {{ (int) $selectedYear === (int) $year ? 'selected' : '' }}>
-                            {{ $year }}
-                        </option>
-                    @endforeach
-                </select>
+                <label for="period" class="sr-only">Periodo</label>
+                <input
+                    id="period"
+                    name="period"
+                    type="month"
+                    class="form-control form-control-sm lg-month-input"
+                    value="{{ $selectedPeriod }}"
+                    onkeydown="return false;"
+                >
             </div>
 
             <button type="submit" class="btn btn-sm lg-filter-btn is-active">Aplicar filtros</button>

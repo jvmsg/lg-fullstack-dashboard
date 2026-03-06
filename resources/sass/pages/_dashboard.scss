@@ -96,6 +96,45 @@
     background: linear-gradient(120deg, #ba1b3b 0%, #db4d69 100%);
 }
 
+.lg-month-input {
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+    color: var(--lg-text);
+    border: 1px solid rgba(106, 118, 131, 0.3);
+    border-radius: 0.7rem;
+    background-color: #fff;
+    transition: all 0.15s ease;
+    padding: 0.4rem 0.75rem;
+    min-width: 150px;
+
+    &:focus {
+        outline: none;
+        border-color: var(--lg-accent);
+        box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
+    }
+
+    &:hover {
+        border-color: rgba(106, 118, 131, 0.5);
+    }
+
+    // Customiza o ícone do calendário
+    &::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        filter: opacity(0.6);
+        transition: filter 0.15s ease;
+
+        &:hover {
+            filter: opacity(1);
+        }
+    }
+
+    // Remove o clear button no Edge/IE
+    &::-webkit-clear-button {
+        display: none;
+    }
+}
+
 .lg-metric .card-body {
     padding: 1rem;
 }

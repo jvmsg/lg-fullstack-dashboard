@@ -9,10 +9,7 @@
     :selectedProductTypeName="$selectedProductTypeName"
     :productTypes="$productTypes"
     :selectedProductTypeId="$selectedProductTypeId"
-    :availableMonths="$availableMonths"
-    :selectedMonth="$selectedMonth"
-    :availableYears="$availableYears"
-    :selectedYear="$selectedYear"
+    :selectedPeriod="$selectedPeriod"
     :dataReady="$dataReady"
 />
 
