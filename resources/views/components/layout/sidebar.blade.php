@@ -19,19 +19,19 @@
             Dashboard geral
         </a>
 
+        <span class="lg-sidebar__link is-disabled" aria-disabled="true">
+            <span class="lg-sidebar__link-dot"></span>
+            Linha especifica (em breve)
+        </span>
+
         <a
             href="{{ route('welcome') }}"
             class="lg-sidebar__link {{ request()->routeIs('welcome') ? 'is-active' : '' }}"
             data-sidebar-close
         >
             <span class="lg-sidebar__link-dot"></span>
-            Landing
+            Sobre
         </a>
-
-        <span class="lg-sidebar__link is-disabled" aria-disabled="true">
-            <span class="lg-sidebar__link-dot"></span>
-            Linha especifica (em breve)
-        </span>
 
     </nav>
 

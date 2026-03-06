@@ -9,10 +9,8 @@
     :selectedProductTypeName="$selectedProductTypeName"
     :productTypes="$productTypes"
     :selectedProductTypeId="$selectedProductTypeId"
-    :availableMonths="$availableMonths"
-    :selectedMonth="$selectedMonth"
-    :availableYears="$availableYears"
-    :selectedYear="$selectedYear"
+    :selectedPeriod="$selectedPeriod"
+    :periods="$periods"
     :dataReady="$dataReady"
 />
 
@@ -28,7 +26,7 @@
         ])
     @empty
         <div class="col-12">
-            <div class="alert alert-info mb-0" role="alert">
+            <div class="alert alert-info" role="alert">
                 Nenhum dado encontrado para os filtros selecionados.
             </div>
         </div>

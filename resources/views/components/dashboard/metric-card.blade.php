@@ -3,7 +3,9 @@
         <div class="card-body">
             <p class="lg-metric__label">{{ $line }}</p>
             <p class="lg-metric__value">{{ number_format($efficiency, 2) }}%</p>
-            <p class="lg-metric__delta {{ $trendClass }}">{{ $trend }}</p>
+            @if ($trend)
+                <p class="lg-metric__delta {{ $trendClass }}">{{ $trend }}</p>
+            @endif
 
             <div class="lg-metric__stats">
                 <span>Produzidas: <strong>{{ number_format($produced, 0, ',', '.') }}</strong></span>

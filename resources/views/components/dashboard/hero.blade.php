@@ -1,4 +1,4 @@
-@props(['summary', 'periodLabel', 'selectedProductTypeName', 'productTypes', 'selectedProductTypeId', 'availableMonths', 'selectedMonth', 'availableYears', 'selectedYear', 'dataReady'])
+@props(['summary', 'periodLabel', 'selectedProductTypeName', 'productTypes', 'selectedProductTypeId', 'selectedPeriod', 'periods', 'dataReady'])
 
 <section class="lg-hero card">
     <div class="card-body">
@@ -29,27 +29,7 @@
                 </select>
             </div>
 
-            <div class="form-group mb-0 mr-2">
-                <label for="month" class="sr-only">Mes</label>
-                <select id="month" name="month" class="form-control form-control-sm">
-                    @foreach ($availableMonths as $month)
-                        <option value="{{ $month }}" {{ (int) $selectedMonth === (int) $month ? 'selected' : '' }}>
-                            {{ str_pad($month, 2, '0', STR_PAD_LEFT) }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="form-group mb-0 mr-2">
-                <label for="year" class="sr-only">Ano</label>
-                <select id="year" name="year" class="form-control form-control-sm">
-                    @foreach ($availableYears as $year)
-                        <option value="{{ $year }}" {{ (int) $selectedYear === (int) $year ? 'selected' : '' }}>
-                            {{ $year }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <x-dashboard.period-select :periods="$periods" :selectedPeriod="$selectedPeriod" />
 
             <button type="submit" class="btn btn-sm lg-filter-btn is-active">Aplicar filtros</button>
             <a href="{{ route('dashboard.index') }}" class="btn btn-sm lg-filter-btn" data-dashboard-clear>Limpar</a>

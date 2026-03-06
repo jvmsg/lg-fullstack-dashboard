@@ -26,36 +26,7 @@ class DashboardController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        $availableYears = ProductionMetric::query()
-            ->selectRaw('YEAR(day) as year')
-            ->distinct()
-            ->orderByDesc('year')
-            ->pluck('year')
-            ->map(function ($year) {
-                return (int) $year;
-            })
-            ->values();
-
-        $selectedYear = (int) $request->query('year', 2026);
-        if (!$availableYears->contains($selectedYear)) {
-            $selectedYear = $availableYears->first() ?: 2026;
-        }
-
-        $availableMonths = ProductionMetric::query()
-            ->whereYear('day', $selectedYear)
-            ->selectRaw('MONTH(day) as month')
-            ->distinct()
-            ->orderBy('month')
-            ->pluck('month')
-            ->map(function ($month) {
-                return (int) $month;
-            })
-            ->values();
-
-        $selectedMonth = (int) $request->query('month', 1);
-        if (!$availableMonths->contains($selectedMonth)) {
-            $selectedMonth = $availableMonths->first() ?: 1;
-        }
+        [$selectedYear, $selectedMonth] = $this->resolveSelectedPeriod($request);
 
         $selectedProductTypeId = $request->query('product_type');
         $selectedProductTypeId = is_numeric($selectedProductTypeId) ? (int) $selectedProductTypeId : null;
@@ -110,7 +81,7 @@ class DashboardController extends Controller
                 'produced' => $produced,
                 'defective' => $defective,
                 'efficiency' => round($efficiency, 2),
-                'trend' => is_null($trendValue) ? '--' : sprintf('%+.1f%%', $trendValue),
+                'trend' => is_null($trendValue) ? null : sprintf('%+.1f%%', $trendValue),
                 'trend_class' => is_null($trendValue) ? '' : ($trendValue < 0 ? 'is-down' : 'is-up'),
             ];
         })->sortByDesc('efficiency')->values();
@@ -180,9 +151,9 @@ class DashboardController extends Controller
             'selectedProductTypeName' => optional($selectedProductType)->name,
             'selectedMonth' => $selectedMonth,
             'selectedYear' => $selectedYear,
-            'availableMonths' => $availableMonths,
-            'availableYears' => $availableYears,
+            'selectedPeriod' => sprintf('%04d-%02d', $selectedYear, $selectedMonth),
             'periodLabel' => $this->formatPeriodLabel($selectedMonth, $selectedYear),
+            'periods' => $this->buildAvailablePeriods(),
             'dataReady' => true,
         ];
 
@@ -196,6 +167,50 @@ class DashboardController extends Controller
     private function isPartialRequest(Request $request)
     {
         return $request->header('X-Dashboard-Partial') === 'content';
+    }
+
+    private function resolveSelectedPeriod(Request $request)
+    {
+        $selectedYear = null;
+        $selectedMonth = null;
+
+        $periodInput = trim((string) $request->query('period', ''));
+        $parsedPeriod = $this->parsePeriodInput($periodInput);
+
+        if ($parsedPeriod) {
+            [$selectedYear, $selectedMonth] = $parsedPeriod;
+        }
+
+        if (is_null($selectedYear) || is_null($selectedMonth)) {
+            $selectedYear = (int) $request->query('year', 2026);
+            $selectedMonth = (int) $request->query('month', 1);
+        }
+
+        if ($selectedMonth < 1 || $selectedMonth > 12) {
+            $selectedMonth = 1;
+        }
+
+        if ($selectedYear < 1) {
+            $selectedYear = 2026;
+        }
+
+        return [$selectedYear, $selectedMonth];
+    }
+
+    private function parsePeriodInput($periodInput)
+    {
+        if (!$periodInput || !preg_match('/^(\d{4})-(\d{2})$/', $periodInput, $matches)) {
+            return null;
+        }
+
+        $year = (int) $matches[1];
+        $month = (int) $matches[2];
+
+        if ($month < 1 || $month > 12) {
+            return null;
+        }
+
+        return [$year, $month];
     }
 
     private function calculateEfficiency($produced, $defective)
@@ -242,6 +257,46 @@ class DashboardController extends Controller
         return ($months[(int) $month] ?? 'Mes') . '/' . $year;
     }
 
+    private function buildAvailablePeriods()
+    {
+        $periods = [];
+        $monthNames = [
+            1 => 'Janeiro',
+            2 => 'Fevereiro',
+            3 => 'Março',
+            4 => 'Abril',
+            5 => 'Maio',
+            6 => 'Junho',
+            7 => 'Julho',
+            8 => 'Agosto',
+            9 => 'Setembro',
+            10 => 'Outubro',
+            11 => 'Novembro',
+            12 => 'Dezembro',
+        ];
+
+        $startDate = Carbon::createFromDate(2025, 12, 1);
+        $endDate = Carbon::now()->endOfMonth();
+
+        $currentDate = (clone $startDate)->startOfMonth();
+
+        while ($currentDate <= $endDate) {
+            $month = (int) $currentDate->format('m');
+            $year = (int) $currentDate->format('Y');
+            $value = $currentDate->format('Y-m');
+            $label = $monthNames[$month] . ' ' . $year;
+
+            $periods[] = [
+                'value' => $value,
+                'label' => $label,
+            ];
+
+            $currentDate->addMonth();
+        }
+
+        return $periods;
+    }
+
     private function emptyStateData()
     {
         return [
@@ -260,9 +315,9 @@ class DashboardController extends Controller
             'selectedProductTypeName' => null,
             'selectedMonth' => 1,
             'selectedYear' => 2026,
-            'availableMonths' => collect([1]),
-            'availableYears' => collect([2026]),
+            'selectedPeriod' => '2026-01',
             'periodLabel' => 'Jan/2026',
+            'periods' => $this->buildAvailablePeriods(),
             'dataReady' => false,
         ];
     }
