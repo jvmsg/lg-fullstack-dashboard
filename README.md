@@ -8,20 +8,20 @@ Sistema web que apresenta a eficiência de produção de 4 linhas de produtos (G
 
 **Funcionalidades principais:**
 
-- Visualização de todas as linhas de produção simultaneamente
-- Filtro por linha específica
-- Filtro por período (padrão: Janeiro/2026)
-- Cálculo automático de eficiência: `(unidades_produzidas - unidades_defeituosas) / unidades_produzidas × 100`
-- API REST para consumo dos dados
-- Interface responsiva com Bootstrap 4
+-   Visualização de todas as linhas de produção simultaneamente
+-   Filtro por linha específica
+-   Filtro por período (padrão: Janeiro/2026)
+-   Cálculo automático de eficiência: `(unidades_produzidas - unidades_defeituosas) / unidades_produzidas × 100`
+-   API REST para consumo dos dados
+-   Interface responsiva com Bootstrap 4
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Backend:** Laravel 7.x
-- **Frontend:** Blade Templates + Bootstrap 4
-- **Banco de Dados:** MySQL 5.7+
-- **Server:** PHP 7.2.5+
-- **Ambiente:** Laragon (Windows)
+-   **Backend:** Laravel 7.x
+-   **Frontend:** Blade Templates + Bootstrap 4
+-   **Banco de Dados:** MySQL 5.7+
+-   **Server:** PHP 7.2.5+
+-   **Ambiente:** Laragon (Windows)
 
 ## ⚙️ Setup Inicial
 
@@ -72,9 +72,9 @@ php artisan db:setup
 
 Este comando irá:
 
-- ✅ Executar as migrations (criar tabelas)
-- ✅ Popular o banco com dados de teste (Janeiro/2026)
-- ✅ Preparar o dashboard para uso
+-   ✅ Executar as migrations (criar tabelas)
+-   ✅ Popular o banco com dados de teste (Janeiro/2026)
+-   ✅ Preparar o dashboard para uso
 
 **Alternativa manual:**
 
