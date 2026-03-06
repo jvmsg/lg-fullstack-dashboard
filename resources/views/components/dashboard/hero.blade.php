@@ -16,7 +16,7 @@
             e <strong>{{ number_format($summary['total_defective'], 0, ',', '.') }}</strong> defeituosas no periodo.
         </p>
 
-        <form method="GET" action="{{ route('dashboard.index') }}" class="lg-filter-row">
+        <form method="GET" action="{{ route('dashboard.index') }}" class="lg-filter-row" data-dashboard-filter-form>
             <div class="form-group mb-0 mr-2">
                 <label for="product_type" class="sr-only">Linha</label>
                 <select id="product_type" name="product_type" class="form-control form-control-sm">
@@ -52,7 +52,7 @@
             </div>
 
             <button type="submit" class="btn btn-sm lg-filter-btn is-active">Aplicar filtros</button>
-            <a href="{{ route('dashboard.index') }}" class="btn btn-sm lg-filter-btn">Limpar</a>
+            <a href="{{ route('dashboard.index') }}" class="btn btn-sm lg-filter-btn" data-dashboard-clear>Limpar</a>
         </form>
 
         @if (!$dataReady)

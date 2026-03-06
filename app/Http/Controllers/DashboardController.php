@@ -13,7 +13,13 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         if (!Schema::hasTable('product_types') || !Schema::hasTable('production_metrics')) {
-            return view('dashboard.index', $this->emptyStateData());
+            $viewData = $this->emptyStateData();
+
+            if ($this->isPartialRequest($request)) {
+                return view('dashboard.partials.content', $viewData);
+            }
+
+            return view('dashboard.index', $viewData);
         }
 
         $productTypes = ProductType::query()
@@ -164,7 +170,7 @@ class DashboardController extends Controller
 
         $summary = $this->buildSummary($lineMetrics);
 
-        return view('dashboard.index', [
+        $viewData = [
             'lineMetrics' => $lineMetrics,
             'dailyPulse' => $dailyPulse,
             'dailyTrendByLine' => $dailyTrendByLine,
@@ -178,7 +184,18 @@ class DashboardController extends Controller
             'availableYears' => $availableYears,
             'periodLabel' => $this->formatPeriodLabel($selectedMonth, $selectedYear),
             'dataReady' => true,
-        ]);
+        ];
+
+        if ($this->isPartialRequest($request)) {
+            return view('dashboard.partials.content', $viewData);
+        }
+
+        return view('dashboard.index', $viewData);
+    }
+
+    private function isPartialRequest(Request $request)
+    {
+        return $request->header('X-Dashboard-Partial') === 'content';
     }
 
     private function calculateEfficiency($produced, $defective)

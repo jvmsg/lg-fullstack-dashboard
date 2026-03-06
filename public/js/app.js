@@ -33017,19 +33017,318 @@ module.exports = function(module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var chart_js_auto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chart.js/auto */ "./node_modules/chart.js/auto/auto.mjs");
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 // Import Chart.js
 
 window.Chart = chart_js_auto__WEBPACK_IMPORTED_MODULE_0__["default"];
+var DASHBOARD_CONTENT_SELECTOR = "[data-dashboard-content]";
+var DASHBOARD_FILTER_FORM_SELECTOR = "[data-dashboard-filter-form]";
+var DASHBOARD_CLEAR_SELECTOR = "[data-dashboard-clear]";
+var DASHBOARD_META_SELECTOR = "[data-dashboard-meta]";
+var TOPBAR_SUBTITLE_SELECTOR = ".lg-topbar__subtitle";
+var destroyEfficiencyChart = function destroyEfficiencyChart() {
+  if (window.__dashboardEfficiencyChart) {
+    window.__dashboardEfficiencyChart.destroy();
+    window.__dashboardEfficiencyChart = null;
+  }
+};
+var syncTopbarSubtitle = function syncTopbarSubtitle() {
+  var scope = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  var metaElement = scope.querySelector(DASHBOARD_META_SELECTOR);
+  var topbarSubtitle = document.querySelector(TOPBAR_SUBTITLE_SELECTOR);
+  if (!metaElement || !topbarSubtitle) {
+    return;
+  }
+  var subtitle = metaElement.getAttribute("data-page-subtitle");
+  if (subtitle) {
+    topbarSubtitle.textContent = subtitle;
+  }
+};
+var renderEfficiencyChart = function renderEfficiencyChart() {
+  var scope = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  var canvas = scope.querySelector("#efficiencyChart");
+  var trendDataElement = scope.querySelector("#efficiencyTrendData");
+  if (!canvas || !trendDataElement) {
+    destroyEfficiencyChart();
+    return;
+  }
+  var trendData = [];
+  try {
+    trendData = JSON.parse(trendDataElement.textContent || "[]");
+  } catch (error) {
+    console.error("Falha ao ler dados do grafico de eficiencia.", error);
+    return;
+  }
+  if (!Array.isArray(trendData) || !trendData.length) {
+    destroyEfficiencyChart();
+    return;
+  }
+  var lineColors = [{
+    border: "#a70077",
+    bg: "rgba(167, 0, 119, 0.1)"
+  }, {
+    border: "#0066cc",
+    bg: "rgba(0, 102, 204, 0.1)"
+  }, {
+    border: "#ff6b35",
+    bg: "rgba(255, 107, 53, 0.1)"
+  }, {
+    border: "#00a86b",
+    bg: "rgba(0, 168, 107, 0.1)"
+  }];
+  var allDays = [];
+  trendData.forEach(function (line) {
+    if (!line || !Array.isArray(line.data)) {
+      return;
+    }
+    line.data.forEach(function (point) {
+      if (point && !allDays.includes(point.day)) {
+        allDays.push(point.day);
+      }
+    });
+  });
+  var datasets = trendData.map(function (line, index) {
+    var colorIndex = index % lineColors.length;
+    var color = lineColors[colorIndex];
+    var dataPoints = allDays.map(function (day) {
+      var point = Array.isArray(line.data) ? line.data.find(function (item) {
+        return item.day === day;
+      }) : null;
+      return point ? point.efficiency : null;
+    });
+    return {
+      label: line.name,
+      data: dataPoints,
+      borderColor: color.border,
+      backgroundColor: color.bg,
+      borderWidth: 2,
+      fill: true,
+      tension: 0.4,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      pointBackgroundColor: color.border,
+      pointBorderColor: "#fff",
+      pointBorderWidth: 2,
+      pointHoverBackgroundColor: color.border,
+      pointHoverBorderColor: "#fff"
+    };
+  });
+  destroyEfficiencyChart();
+  window.__dashboardEfficiencyChart = new chart_js_auto__WEBPACK_IMPORTED_MODULE_0__["default"](canvas, {
+    type: "line",
+    data: {
+      labels: allDays,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: "index",
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: "top",
+          labels: {
+            usePointStyle: true,
+            padding: 15,
+            font: {
+              size: 12,
+              weight: "500"
+            }
+          }
+        },
+        tooltip: {
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+          padding: 12,
+          titleFont: {
+            size: 13,
+            weight: "600"
+          },
+          bodyFont: {
+            size: 12
+          },
+          callbacks: {
+            label: function label(context) {
+              var label = context.dataset.label || "";
+              var value = context.parsed.y !== null ? "".concat(context.parsed.y.toFixed(2), "%") : "N/A";
+              return "".concat(label, ": ").concat(value);
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          ticks: {
+            callback: function callback(value) {
+              return "".concat(value.toFixed(1), "%");
+            },
+            font: {
+              size: 11
+            },
+            color: "#666"
+          },
+          grid: {
+            color: "rgba(0, 0, 0, 0.06)",
+            drawBorder: false
+          }
+        },
+        x: {
+          ticks: {
+            font: {
+              size: 11
+            },
+            color: "#666",
+            maxRotation: 45,
+            minRotation: 0
+          },
+          grid: {
+            display: false,
+            drawBorder: false
+          }
+        }
+      }
+    }
+  });
+};
+var loadDashboardContent = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(url, contentContainer) {
+    var response, html;
+    return _regenerator().w(function (_context) {
+      while (1) switch (_context.n) {
+        case 0:
+          destroyEfficiencyChart();
+          _context.n = 1;
+          return fetch(url, {
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+              "X-Dashboard-Partial": "content"
+            }
+          });
+        case 1:
+          response = _context.v;
+          if (response.ok) {
+            _context.n = 2;
+            break;
+          }
+          throw new Error("Falha ao carregar dashboard: ".concat(response.status));
+        case 2:
+          _context.n = 3;
+          return response.text();
+        case 3:
+          html = _context.v;
+          contentContainer.innerHTML = html;
+          window.history.replaceState({}, "", url);
+          syncTopbarSubtitle(contentContainer);
+          setupDashboardFilters(contentContainer);
+          renderEfficiencyChart(contentContainer);
+        case 4:
+          return _context.a(2);
+      }
+    }, _callee);
+  }));
+  return function loadDashboardContent(_x, _x2) {
+    return _ref.apply(this, arguments);
+  };
+}();
+var setupDashboardFilters = function setupDashboardFilters() {
+  var scope = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+  var contentContainer = document.querySelector(DASHBOARD_CONTENT_SELECTOR);
+  var form = scope.querySelector(DASHBOARD_FILTER_FORM_SELECTOR);
+  if (!contentContainer || !form || form.dataset.asyncBound === "true") {
+    return;
+  }
+  form.dataset.asyncBound = "true";
+  form.addEventListener("submit", /*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(event) {
+      var action, url, _t;
+      return _regenerator().w(function (_context2) {
+        while (1) switch (_context2.p = _context2.n) {
+          case 0:
+            event.preventDefault();
+            action = form.getAttribute("action") || window.location.pathname;
+            url = new URL(action, window.location.origin);
+            url.search = new URLSearchParams(new FormData(form)).toString();
+            _context2.p = 1;
+            _context2.n = 2;
+            return loadDashboardContent(url.toString(), contentContainer);
+          case 2:
+            _context2.n = 4;
+            break;
+          case 3:
+            _context2.p = 3;
+            _t = _context2.v;
+            window.location.assign(url.toString());
+          case 4:
+            return _context2.a(2);
+        }
+      }, _callee2, null, [[1, 3]]);
+    }));
+    return function (_x3) {
+      return _ref2.apply(this, arguments);
+    };
+  }());
+  var clearLink = form.querySelector(DASHBOARD_CLEAR_SELECTOR);
+  if (!clearLink || clearLink.dataset.asyncBound === "true") {
+    return;
+  }
+  clearLink.dataset.asyncBound = "true";
+  clearLink.addEventListener("click", /*#__PURE__*/function () {
+    var _ref3 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3(event) {
+      var url, _t2;
+      return _regenerator().w(function (_context3) {
+        while (1) switch (_context3.p = _context3.n) {
+          case 0:
+            if (!(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) {
+              _context3.n = 1;
+              break;
+            }
+            return _context3.a(2);
+          case 1:
+            event.preventDefault();
+            url = clearLink.getAttribute("href");
+            if (url) {
+              _context3.n = 2;
+              break;
+            }
+            return _context3.a(2);
+          case 2:
+            _context3.p = 2;
+            _context3.n = 3;
+            return loadDashboardContent(url, contentContainer);
+          case 3:
+            _context3.n = 5;
+            break;
+          case 4:
+            _context3.p = 4;
+            _t2 = _context3.v;
+            window.location.assign(url);
+          case 5:
+            return _context3.a(2);
+        }
+      }, _callee3, null, [[2, 4]]);
+    }));
+    return function (_x4) {
+      return _ref3.apply(this, arguments);
+    };
+  }());
+};
 document.addEventListener("DOMContentLoaded", function () {
+  setupDashboardFilters(document);
+  syncTopbarSubtitle(document);
+  renderEfficiencyChart(document);
   var body = document.body;
   var toggleButtons = document.querySelectorAll("[data-sidebar-toggle]");
   var overlay = document.querySelector("[data-sidebar-overlay]");
   var closeTargets = document.querySelectorAll("[data-sidebar-close]");
-  if (!toggleButtons.length) {
-    return;
-  }
   var openClass = "is-sidebar-open";
   var closeSidebar = function closeSidebar() {
     body.classList.remove(openClass);
