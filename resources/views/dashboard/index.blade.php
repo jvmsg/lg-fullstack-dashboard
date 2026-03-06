@@ -104,11 +104,11 @@
             <article class="lg-panel card h-100">
                 <div class="card-body">
                     <div class="lg-panel__head">
-                        <h4>Tendencia diaria de eficiencia</h4>
+                        <h4>Tendencia diaria de eficiencia por linha</h4>
                         <span>{{ $periodLabel }}</span>
                     </div>
 
-                    @if ($dailyPulse->isNotEmpty())
+                    @if ($dailyTrendByLine->isNotEmpty())
                         <div style="position: relative; height: 280px;">
                             <canvas id="efficiencyChart"></canvas>
                         </div>
@@ -129,9 +129,9 @@
                         <span>{{ $dailyPulse->count() }} dias no periodo</span>
                     </div>
 
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
                         <table class="table lg-data-table mb-0">
-                            <thead>
+                            <thead style="position: sticky; top: 0; background-color: #fff; z-index: 1;">
                                 <tr>
                                     <th>Dia</th>
                                     <th>Prod.</th>
