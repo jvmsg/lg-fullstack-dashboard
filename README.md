@@ -62,7 +62,7 @@ Abra o **MySQL Console** do Laragon (Menu → MySQL → MySQL Console) e execute
 CREATE DATABASE lg_fullstack_dashboard;
 ```
 
-> Nota: Estava nos planos iniciais preparar um comando para o `artisan` capaz de criar o banco e executar as migrations e o seed. Porém, para evitar problemas com autenticação no MySQL a criação do banco ficou comentada no código e é preciso criar o banco manualmente de acordo com o valor `DB_DATABASE` do `.env`.
+> **Nota:** Caso tenha problemas de autenticação MySQL (erro 2054), consulte a seção [🔧 Solução de Problemas](#-solução-de-problemas) abaixo para instruções detalhadas de correção.
 
 ### 5. Execute o setup automático
 
@@ -81,3 +81,51 @@ Este comando irá:
 ```bash
 php artisan migrate --seed
 ```
+
+## 🔧 Solução de Problemas
+
+### Erro de Autenticação MySQL (SQLSTATE[HY000] [2054])
+
+Se você encontrar o erro `"The server requested authentication method unknown to the client"` ao tentar conectar ao banco de dados, isso ocorre porque o MySQL 8.0+ usa o método de autenticação `caching_sha2_password` por padrão, que pode não ser suportado pelo PDO do PHP.
+
+**Sintoma:**
+
+```
+SQLSTATE[HY000] [2054] The server requested authentication method unknown to the client
+```
+
+**Solução:**
+
+Abra o **HeidiSQL** no Laragon (Menu → HeidiSQL) ou **phpMyAdmin** e execute o seguinte script SQL:
+
+```sql
+-- ========================================
+-- Script de Correção MySQL para Laravel
+-- ========================================
+-- Execute este script no HeidiSQL ou phpMyAdmin
+-- para corrigir o erro de autenticação 2054
+
+-- 1. Criar o banco de dados se não existir
+CREATE DATABASE IF NOT EXISTS lg_fullstack_dashboard;
+
+-- 2. Selecionar o banco
+USE lg_fullstack_dashboard;
+
+-- 3. Alterar o método de autenticação do usuário root
+-- (Isso corrige o erro "authentication method unknown to the client")
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
+
+-- 4. Atualizar privilégios
+FLUSH PRIVILEGES;
+
+-- 5. Verificar a alteração
+SELECT user, host, plugin FROM mysql.user WHERE user = 'root';
+
+-- ========================================
+-- Resultado esperado:
+-- user | host      | plugin
+-- root | localhost | mysql_native_password
+-- ========================================
+```
+
+Após executar o script, tente novamente conectar ao banco de dados.
