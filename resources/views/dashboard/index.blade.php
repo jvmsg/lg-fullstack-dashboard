@@ -163,29 +163,63 @@
 
 @push('scripts')
 <script>
-    @if ($dailyPulse->isNotEmpty())
+    @if ($dailyTrendByLine->isNotEmpty())
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('efficiencyChart');
             if (!ctx) return;
 
-            const chartData = {
-                labels: {!! json_encode($dailyPulse->pluck('day')->toArray()) !!},
-                datasets: [{
-                    label: 'Eficiência (%)',
-                    data: {!! json_encode($dailyPulse->pluck('efficiency')->map(function($val) { return round($val, 2); })->toArray()) !!},
-                    borderColor: '#a70077',
-                    backgroundColor: 'rgba(167, 0, 119, 0.1)',
+            // Cores para cada linha de produto
+            const lineColors = [
+                { border: '#a70077', bg: 'rgba(167, 0, 119, 0.1)' },  // Magenta LG
+                { border: '#0066cc', bg: 'rgba(0, 102, 204, 0.1)' },  // Azul
+                { border: '#ff6b35', bg: 'rgba(255, 107, 53, 0.1)' }, // Laranja
+                { border: '#00a86b', bg: 'rgba(0, 168, 107, 0.1)' },  // Verde
+            ];
+
+            const trendData = {!! json_encode($dailyTrendByLine) !!};
+            
+            // Extrair todos os dias únicos (labels do eixo X)
+            const allDays = [];
+            trendData.forEach(line => {
+                line.data.forEach(point => {
+                    if (!allDays.includes(point.day)) {
+                        allDays.push(point.day);
+                    }
+                });
+            });
+
+            // Criar um dataset para cada linha de produto
+            const datasets = trendData.map((line, index) => {
+                const colorIndex = index % lineColors.length;
+                const color = lineColors[colorIndex];
+                
+                // Mapear os dados para garantir que todos os dias estão presentes
+                const dataPoints = allDays.map(day => {
+                    const point = line.data.find(p => p.day === day);
+                    return point ? point.efficiency : null;
+                });
+
+                return {
+                    label: line.name,
+                    data: dataPoints,
+                    borderColor: color.border,
+                    backgroundColor: color.bg,
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4,
                     pointRadius: 4,
                     pointHoverRadius: 6,
-                    pointBackgroundColor: '#a70077',
+                    pointBackgroundColor: color.border,
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2,
-                    pointHoverBackgroundColor: '#a70077',
+                    pointHoverBackgroundColor: color.border,
                     pointHoverBorderColor: '#fff',
-                }]
+                };
+            });
+
+            const chartData = {
+                labels: allDays,
+                datasets: datasets
             };
 
             const config = {
@@ -194,9 +228,22 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
                     plugins: {
                         legend: {
-                            display: false
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 15,
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                }
+                            }
                         },
                         tooltip: {
                             backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -210,7 +257,9 @@
                             },
                             callbacks: {
                                 label: function(context) {
-                                    return 'Eficiência: ' + context.parsed.y.toFixed(2) + '%';
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y !== null ? context.parsed.y.toFixed(2) + '%' : 'N/A';
+                                    return label + ': ' + value;
                                 }
                             }
                         }

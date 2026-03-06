@@ -131,11 +131,43 @@ class DashboardController extends Controller
             })
             ->values();
 
+        // Daily trend by product line for multi-line chart
+        $dailyTrendByLine = ProductionMetric::query()
+            ->selectRaw('product_type_id, day, SUM(quantity_produced) as produced, SUM(quantity_defective) as defective')
+            ->whereBetween('day', [$periodStart->toDateString(), $periodEnd->toDateString()])
+            ->when($selectedProductTypeId, function ($query) use ($selectedProductTypeId) {
+                $query->where('product_type_id', $selectedProductTypeId);
+            })
+            ->groupBy('product_type_id', 'day')
+            ->orderBy('day')
+            ->get()
+            ->groupBy('product_type_id')
+            ->map(function ($metrics, $productTypeId) use ($productTypes) {
+                $productTypeName = optional($productTypes->firstWhere('id', (int) $productTypeId))->name ?: 'Sem nome';
+                
+                $data = $metrics->map(function ($row) {
+                    $produced = (int) $row->produced;
+                    $defective = (int) $row->defective;
+                    
+                    return [
+                        'day' => Carbon::parse($row->day)->format('d/m'),
+                        'efficiency' => round($this->calculateEfficiency($produced, $defective), 2),
+                    ];
+                })->values();
+
+                return [
+                    'name' => $productTypeName,
+                    'data' => $data,
+                ];
+            })
+            ->values();
+
         $summary = $this->buildSummary($lineMetrics);
 
         return view('dashboard.index', [
             'lineMetrics' => $lineMetrics,
             'dailyPulse' => $dailyPulse,
+            'dailyTrendByLine' => $dailyTrendByLine,
             'summary' => $summary,
             'productTypes' => $productTypes,
             'selectedProductTypeId' => $selectedProductTypeId,
@@ -198,6 +230,7 @@ class DashboardController extends Controller
         return [
             'lineMetrics' => collect(),
             'dailyPulse' => collect(),
+            'dailyTrendByLine' => collect(),
             'summary' => [
                 'lines_monitored' => 0,
                 'total_produced' => 0,

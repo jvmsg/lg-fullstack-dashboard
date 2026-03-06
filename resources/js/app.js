@@ -1,7 +1,7 @@
 require("./bootstrap");
 
 // Import Chart.js
-import Chart from 'chart.js/auto';
+import Chart from "chart.js/auto";
 window.Chart = Chart;
 
 document.addEventListener("DOMContentLoaded", () => {
