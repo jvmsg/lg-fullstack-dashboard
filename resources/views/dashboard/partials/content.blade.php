@@ -26,7 +26,7 @@
         ])
     @empty
         <div class="col-12">
-            <div class="alert alert-info mb-0" role="alert">
+            <div class="alert alert-info" role="alert">
                 Nenhum dado encontrado para os filtros selecionados.
             </div>
         </div>
