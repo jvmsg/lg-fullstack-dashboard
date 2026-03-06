@@ -1,5 +1,9 @@
 require("./bootstrap");
 
+// Import Chart.js
+import Chart from 'chart.js/auto';
+window.Chart = Chart;
+
 document.addEventListener("DOMContentLoaded", () => {
     const body = document.body;
     const toggleButtons = document.querySelectorAll("[data-sidebar-toggle]");

@@ -31,10 +31,6 @@
             Linha especifica (em breve)
         </span>
 
-        <span class="lg-sidebar__link is-disabled" aria-disabled="true">
-            <span class="lg-sidebar__link-dot"></span>
-            API insights (em breve)
-        </span>
     </nav>
 
     <div class="lg-sidebar__meta">
